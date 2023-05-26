@@ -1,5 +1,5 @@
 from pyannote.audio import Pipeline
-
+import torch
 
 class Diarization:
     
@@ -11,19 +11,22 @@ class Diarization:
         # 3. visit hf.co/settings/tokens to create an access token
         self.access_token = access_token
     
-    def run(self, audio_file:str):
+    def run(self, input_name:str, output_name:str):
         '''
         Add later.
         '''
+        
+        # Create device for running on GPU
+        device = torch.device('mps')
 
         pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=self.access_token)
-
-        # apply the pipeline to an audio file
-        diarization = pipeline(audio_file)
+        pipeline.to(device)
+        
+        # Apply the pipeline to an audio file
+        diarization = pipeline(input_name)
 
         # dump the diarization output to disk using RTTM format
-        with open("test.rttm", "w") as rttm:
+        with open("output/"+output_name+".rttm", "w") as rttm: # Adapt this to be what you need
             diarization.write_rttm(rttm)
-            
-        # TODO: get images of output
-        # TODO: change the output name to be customizable from main
+        
+        # TODO: get different type of output / check what you can do with the pipeline
