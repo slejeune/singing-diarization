@@ -1,6 +1,10 @@
 from pyannote.audio import Pipeline
+from pyannote.database.util import load_rttm
+from pyannote.core import notebook
+
 import torch
 import os
+import matplotlib.pyplot as plt
 
 class Diarization:
     
@@ -15,6 +19,7 @@ class Diarization:
     def run(self, input_path:str):
         '''
         Apply diarization on one or multiple audio file(s).
+        Also generates a RTTM file & a timeline graph per audio file.
         
         Args:
             input_path: location of the input file or folder
@@ -31,20 +36,40 @@ class Diarization:
             # Apply the pipeline to an audio file
             diarization = pipeline(input_path)
 
-            # dump the diarization output to disk using RTTM format
-            with open("output/"+input_path.split("/")[-1].split(".")[0]+".rttm", "w") as rttm: # Adapt this to be what you need
+            file_name = input_path.split("/")[-1].split(".")[0]
+            output_path = "output/"+file_name+".rttm"
+            
+            # Dump the diarization output to disk using RTTM format
+            with open(output_path, "w") as rttm:
                 diarization.write_rttm(rttm)
                 
+            reference = load_rttm(output_path)[file_name]            
+            fig, ax = plt.subplots()
+            notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
+            ax.set_title(file_name, pad=20)
+            fig.savefig('plots/'+file_name+'.png')
+            
         else: # A folder
             print("Warning: you are (probably) analyzing multiple files in a folder! This may take a while.")
             
-            for filename in os.listdir(input_path):
+            for file in os.listdir(input_path):
+                
+                file_name = file.split("/")[-1].split(".")[0]
+                output_path = "output/"+file_name+".rttm"
+                
+                # Ignore hidden files
+                if(file_name == ""):
+                    continue
                 
                 # Apply the pipeline to an audio file
-                diarization = pipeline(input_path+filename)
+                diarization = pipeline(input_path+file)
 
-                # dump the diarization output to disk using RTTM format
-                with open("output/"+filename.split("/")[-1].split(".")[0]+".rttm", "w") as rttm: # Adapt this to be what you need
+                # Dump the diarization output to disk using RTTM format
+                with open(output_path, "w") as rttm:
                     diarization.write_rttm(rttm)
-        
-        # TODO: get different type of output / check what you can do with the pipeline
+
+                reference = load_rttm(output_path)[file_name]            
+                fig, ax = plt.subplots()
+                notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
+                ax.set_title(file_name, pad=20)
+                fig.savefig('plots/'+file_name+'.png')
