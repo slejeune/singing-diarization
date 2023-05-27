@@ -18,11 +18,11 @@ class Diarization:
     
     def run(self, input_path:str):
         '''
-        Apply diarization on one or multiple audio file(s).
+        Apply diarization on one audio file.
         Also generates a RTTM file & a timeline graph per audio file.
         
         Args:
-            input_path: location of the input file or folder
+            input_path: location of the input file
         '''
         
         # Create a pipeline running on GPU
@@ -45,3 +45,4 @@ class Diarization:
         notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
         ax.set_title(file_name, pad=20)
         fig.savefig('plots/'+file_name+'.png')
+        
