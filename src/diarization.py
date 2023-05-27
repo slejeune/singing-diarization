@@ -3,7 +3,6 @@ from pyannote.database.util import load_rttm
 from pyannote.core import notebook
 
 import torch
-import os
 import matplotlib.pyplot as plt
 
 class Diarization:
@@ -40,6 +39,7 @@ class Diarization:
         with open(output_path, "w") as rttm:
             diarization.write_rttm(rttm)
             
+        # Plot and save a graph of the RTTM results
         reference = load_rttm(output_path)[file_name]            
         fig, ax = plt.subplots()
         notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
