@@ -26,11 +26,11 @@ class Diarization:
         
         # Create a pipeline running on GPU
         device = torch.device('mps')
-        pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=self.access_token)
+        pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization", use_auth_token=self.access_token)
         pipeline.to(device)
             
         # Apply the pipeline to an audio file
-        diarization = pipeline(input_path)
+        diarization = pipeline(input_path, min_speakers=4, max_speakers=9)
 
         file_name = input_path.split("/")[-1].split(".")[0]
         output_path = "output/"+file_name+".rttm"
