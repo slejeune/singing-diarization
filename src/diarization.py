@@ -38,6 +38,13 @@ class Diarization:
             diarization.write_rttm(rttm)
         
     def plot(self, rttm_path:str, save:bool=False) -> None:
+        '''
+        Plot the diarization graph for a given RTTM file.
+        
+        Args:
+            rttm_path: location of the RTTM file
+            save: whether the graph should be saved or not
+        '''
         
         file_name = rttm_path.split("/")[-1].split(".")[0]
         
