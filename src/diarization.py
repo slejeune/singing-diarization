@@ -2,7 +2,6 @@ from pyannote.audio import Pipeline
 from pyannote.database.util import load_rttm
 from pyannote.core import notebook
 
-import torch
 import matplotlib.pyplot as plt
 
 class Diarization:
