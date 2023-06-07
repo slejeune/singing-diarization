@@ -15,7 +15,7 @@ class Diarization:
         # 3. visit hf.co/settings/tokens to create an access token
         self.access_token = access_token
     
-    def run(self, input_path:str):
+    def run(self, input_path:str) -> None:
         '''
         Apply diarization on one audio file.
         Also generates a RTTM file & a timeline graph per audio file.
@@ -24,13 +24,11 @@ class Diarization:
             input_path: location of the input file
         '''
         
-        # Create a pipeline running on GPU
-        device = torch.device('mps')
-        pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization", use_auth_token=self.access_token)
-        pipeline.to(device)
+        # Create a pipeline
+        pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=self.access_token)
             
         # Apply the pipeline to an audio file
-        diarization = pipeline(input_path, min_speakers=4, max_speakers=9)
+        diarization = pipeline(input_path)
 
         file_name = input_path.split("/")[-1].split(".")[0]
         output_path = "output/"+file_name+".rttm"
@@ -38,11 +36,17 @@ class Diarization:
         # Dump the diarization output to disk using RTTM format
         with open(output_path, "w") as rttm:
             diarization.write_rttm(rttm)
-            
-        # Plot and save a graph of the RTTM results
-        reference = load_rttm(output_path)[file_name]            
-        fig, ax = plt.subplots()
-        notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
-        ax.set_title(file_name, pad=20)
-        fig.savefig('plots/'+file_name+'.png')
         
+    def plot(self, rttm_path:str, save:bool=False) -> None:
+        
+        file_name = rttm_path.split("/")[-1].split(".")[0]
+        
+        # Plot and save a graph of the RTTM results
+        reference = load_rttm(rttm_path)[file_name]            
+        fig, ax = plt.subplots(figsize=(10,5))
+        notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
+        ax.set_title(file_name)
+        plt.show()
+        
+        if save:
+            fig.savefig('plots/'+file_name+'.png')
