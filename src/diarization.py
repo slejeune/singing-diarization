@@ -51,9 +51,9 @@ class Diarization:
         reference = load_rttm(rttm_path)[file_name]            
         fig, ax = plt.subplots(figsize=(10,5))
         notebook.plot_annotation(reference, ax=ax, time=True, legend=True)
-        ax.set_title(file_name+" ground truth")
+        ax.set_title(file_name)
         plt.tight_layout()
         plt.show()
         
         if save:
-            fig.savefig('plots/'+file_name+" ground truth"+'.png')
+            fig.savefig('plots/'+file_name+'.png')
