@@ -52,7 +52,7 @@ class Evaluation:
             output_path: location where the graph will be saved
         """
         
-        fig, ax = plt.subplots(1, 2, figsize=(10,8))
+        fig, ax = plt.subplots(1, 2, figsize=(12,8))
         
         # Speaking
         speaking_df = report[:int((report.shape[0]-1)/2)]
@@ -61,6 +61,7 @@ class Evaluation:
         ax[0].set_title("Speaking")
         ax[0].tick_params(labelrotation=90)
         ax[0].set_ylabel("DER")
+        ax[0].set_ylim([0,100])
         
         # Singing
         singing_df = report[int((report.shape[0]-1)/2):-1]
@@ -69,6 +70,7 @@ class Evaluation:
         ax[1].set_title("Singing")
         ax[1].tick_params(labelrotation=90)
         ax[1].set_ylabel("DER")
+        ax[1].set_ylim([0,100])
         
         plt.tight_layout()
         plt.show()
